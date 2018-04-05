@@ -4,7 +4,7 @@ Cardano PHP client to integrate Cardano in PHP platforms using Cardano Wallet
 
 ## Example Usage
 
-##### To disable ssl verification (for allowing self signed certificate)
+##### Default initialization (with ssl verification)
 ```code
 $client = new Cardano('https://127.0.0.1', 8090); // (host, port)
 ```
