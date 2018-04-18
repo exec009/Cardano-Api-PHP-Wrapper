@@ -182,7 +182,7 @@ class Cardano
     }
     public function getInfo(): array
     {
-        return self::jsonDecode($this->get('/api/v1/info'), true);
+        return self::jsonDecode($this->get('/api/v1/node-info'), true);
     }
     // Miscellaneous Functions End //
     private static function jsonDecode(string $content): array
