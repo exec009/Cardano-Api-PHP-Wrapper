@@ -15,102 +15,102 @@ class Cardano
     // Test Functions Start //
     public function testReset(): array
     {
-        return self::json_decode($this->post('/api/test/reset'), true);
+        return self::json_decode($this->post('/api/v1/test/reset'), true);
     }
     public function testState(): string
     {
-        return $this->get('/api/test/state');
+        return $this->get('/api/v1/test/state');
     }
     // Test Functions End //
 
     // Wallet Functions Start //
     public function getWallet(string $walletId): array
     {
-        return self::jsonDecode($this->get('/api/wallets/'.$walletId), true);
+        return self::jsonDecode($this->get('/api/v1/wallets/'.$walletId), true);
     }
     public function updateWallet(string $walletId, array $body):  array
     {
-        return self::jsonDecode($this->put('/api/wallets/'.$walletId, $body), true);
+        return self::jsonDecode($this->put('/api/v1/wallets/'.$walletId, $body), true);
     }
     public function deleteWallet(string $walletId):  array
     {
-        return self::jsonDecode($this->delete('/api/wallets/'.$walletId), true);
+        return self::jsonDecode($this->delete('/api/v1/wallets/'.$walletId), true);
     }
     public function getWallets(): array
     {
-        return self::jsonDecode($this->get('/api/wallets'), true);
+        return self::jsonDecode($this->get('/api/v1/wallets'), true);
     }
     public function createWallet(array $body): array
     {
-        return self::jsonDecode($this->post('/api/wallets/new', $body), true);
+        return self::jsonDecode($this->post('/api/v1/wallets/new', $body), true);
     }
     public function importWalletKeys(string $passPhrase, string $key): array
     {
-        return self::jsonDecode($this->post('/api/wallets/keys?passphrase='.$passPhrase, [$key]), true);
+        return self::jsonDecode($this->post('/api/v1/wallets/keys?passphrase='.$passPhrase, [$key]), true);
     }
     public function changeWalletPassPhrase(string $walletId, string $oldPassPhrase, string $newPassPhrase): array
     {
-        return self::jsonDecode($this->post('/api/wallets/password'.$walletId.'?old='.$oldPassPhrase.'&new='.$newPassPhrase), true);
+        return self::jsonDecode($this->post('/api/v1/wallets/password'.$walletId.'?old='.$oldPassPhrase.'&new='.$newPassPhrase), true);
     }
     // Wallet Functions End //
 
     // Account Functions Start //
     public function getAccount(string $accountId): array
     {
-        return self::jsonDecode($this->get('/api/accounts/'.$accountId), true);
+        return self::jsonDecode($this->get('/api/v1/accounts/'.$accountId), true);
     }
     public function updateAccount(string $accountId, array $body):  array
     {
-        return self::jsonDecode($this->put('/api/accounts/'.$accountId, $body), true);
+        return self::jsonDecode($this->put('/api/v1/accounts/'.$accountId, $body), true);
     }
     public function deleteAccount(string $accountId):  array
     {
-        return self::jsonDecode($this->delete('/api/accounts/'.$accountId), true);
+        return self::jsonDecode($this->delete('/api/v1/accounts/'.$accountId), true);
     }
     public function getAccounts(): array
     {
-        return self::jsonDecode($this->get('/api/accounts'), true);
+        return self::jsonDecode($this->get('/api/v1/accounts'), true);
     }
     public function createAccount(array $body): array
     {
-        return self::jsonDecode($this->post('/api/accounts', $body), true);
+        return self::jsonDecode($this->post('/api/v1/accounts', $body), true);
     }
     // Account Functions End //
     
     // Address Functions Start //
     public function createAddress(string $body): array
     {
-        return self::jsonDecode($this->post('/api/addresses?passphrase='.$passPhrase, [$body]), true);
+        return self::jsonDecode($this->post('/api/v1/addresses?passphrase='.$passPhrase, [$body]), true);
     }
     public function addressIsValid(string $address): bool
     {
-        return $this->get('/api/addresses/'.$address) === 'true';
+        return $this->get('/api/v1/addresses/'.$address) === 'true';
     }
     // Address Functions End //
 
     // Profile Functions Start //
     public function getProfile(): array
     {
-        return self::jsonDecode($this->get('/api/profile'), true);
+        return self::jsonDecode($this->get('/api/v1/profile'), true);
     }
     public function updateProfile(array $body): array
     {
-        return self::jsonDecode($this->post('/api/profile', $body), true);
+        return self::jsonDecode($this->post('/api/v1/profile', $body), true);
     }
     // Profile Functions End //
 
     // Transaction Functions Start //
     public function createNewTransaction(string $fromAccount, string $toAddress, float $amount, string $body): array
     {
-        return self::jsonDecode($this->post('/api/txs/payments/'.$fromAccount.'/'.$toAddress.'/'.$amount, ['groupingPolicy' => $body]), true);
+        return self::jsonDecode($this->post('/api/v1/txs/payments/'.$fromAccount.'/'.$toAddress.'/'.$amount, ['groupingPolicy' => $body]), true);
     }
     public function estimateTransactionFee(string $from, string $to, float $amount, array $body): array
     {
-        return self::jsonDecode($this->post('/api/txs/fee/'.$from.'/'.$to.'/'.$amount, $body), true);
+        return self::jsonDecode($this->post('/api/v1/txs/fee/'.$from.'/'.$to.'/'.$amount, $body), true);
     }
     public function updateTransaction(string $address, string $transaction, array $body): array
     {
-        return self::jsonDecode($this->post('/api/txs/payments/'.$address.'/'.$transaction, $body), true);
+        return self::jsonDecode($this->post('/api/v1/txs/payments/'.$address.'/'.$transaction, $body), true);
     }
     public function getTransactionHistory(string $walletId = null, string $accountId = null, string $address = null, int $skip = null, int $limit = null): array
     {
@@ -125,64 +125,64 @@ class Cardano
         $params['skip'] = $skip;
         if($limit !== null)
         $params['limit'] = $limit;
-        return self::jsonDecode($this->get('/api/txs/histories?'.http_build_query($params)), true);
+        return self::jsonDecode($this->get('/api/v1/txs/histories?'.http_build_query($params)), true);
     }
     // Transaction Functions End //
 
     // Update Functions Start //
     public function getUpdate(string $accountId): array
     {
-        return self::jsonDecode($this->get('/api/update'), true);
+        return self::jsonDecode($this->get('/api/v1/update'), true);
     }
     public function postponeLastUpdate(): array
     {
-        return self::jsonDecode($this->post('/api/update/postpone'), true);
+        return self::jsonDecode($this->post('/api/v1/update/postpone'), true);
     }
     public function applyLastUpdate(): array
     {
-        return self::jsonDecode($this->post('/api/update/apply'), true);
+        return self::jsonDecode($this->post('/api/v1/update/apply'), true);
     }
     // Update Functions End //
 
     // Redeem Functions Start //
     public function redeemAda(string $passPhrase, array $body): array
     {
-        return self::jsonDecode($this->post('/api/redemptions/ada?passphrase='.$passPharse, $body), true);
+        return self::jsonDecode($this->post('/api/v1/redemptions/ada?passphrase='.$passPharse, $body), true);
     }
     public function redeemAdaPaperVending(string $passPhrase, array $body): array
     {
-        return self::jsonDecode($this->post('/api/papervend/redemptions/ada?passphrase='.$passPharse, $body), true);
+        return self::jsonDecode($this->post('/api/v1/papervend/redemptions/ada?passphrase='.$passPharse, $body), true);
     }
     // Redeem Functions End //
 
     // Miscellaneous Functions Start //
     public function initializedReport(): array
     {
-        return self::jsonDecode($this->post('/api/reporting/initialized'), true);
+        return self::jsonDecode($this->post('/api/v1/reporting/initialized'), true);
     }
     public function getSlotsDuration(): int
     {
-        return intval($this->get('/api/settings/slots/duration'));
+        return intval($this->get('/api/v1/settings/slots/duration'));
     }
     public function getNodeVerison(): array
     {
-        return self::jsonDecode($this->get('/api/settings/version'), true);
+        return self::jsonDecode($this->get('/api/v1/settings/version'), true);
     }
     public function getSyncProgress(): array
     {
-        return self::jsonDecode($this->get('/api/settings/sync/progress'), true);
+        return self::jsonDecode($this->get('/api/v1/settings/sync/progress'), true);
     }
     public function importWallet(string $body): array
     {
-        return self::jsonDecode($this->post('/api/backup/import', [$body]), true);
+        return self::jsonDecode($this->post('/api/v1/backup/import', [$body]), true);
     }
     public function exportWallet(string $walletId, string $body): array
     {
-        return self::jsonDecode($this->post('/api/backup/export/'.$walletId, [$body]), true);
+        return self::jsonDecode($this->post('/api/v1/backup/export/'.$walletId, [$body]), true);
     }
     public function getInfo(): array
     {
-        return self::jsonDecode($this->get('/api/info'), true);
+        return self::jsonDecode($this->get('/api/v1/info'), true);
     }
     // Miscellaneous Functions End //
     private static function jsonDecode(string $content): array
