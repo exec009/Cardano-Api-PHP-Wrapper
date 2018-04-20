@@ -40,4 +40,4 @@ $client = new Cardano('https://127.0.0.1', 8090, true);
 $client->getAccounts();
 ```
 
->>For more information on the Cardano v1 API visit https://cardanodocs.com/technical/wallet/api/v1/
+>For more information on the Cardano v1 API visit https://cardanodocs.com/technical/wallet/api/v1/
