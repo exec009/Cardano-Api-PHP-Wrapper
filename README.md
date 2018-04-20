@@ -1,16 +1,16 @@
 
-##################################
-##### Cardano-Api-PHP-Wrapper ####
+
+Cardano-Api-PHP-Wrapper 
 ##################################
 
 A PHP client to integrate the Cardano SL Wallet into PHP applications. 
 This library uses v1 of the Cardano API.
 
-##############################
-##### Get a Wallet First! ####
+
+Get a Wallet First
 ##############################
 
-To you this library will need to have a working wallet to interact with running on your local host. If you dont already have one, start here: 
+To use this library will need to have a working wallet to interact with running on your local host. If you dont already have one, start here: 
 
 ##### Linux 
 
@@ -22,8 +22,8 @@ Note for Linux users, you don't need to build Daedalus, you only need to build t
 
 https://daedaluswallet.io/
 
-########################
-##### Example Usage ####
+
+Example Usage
 ########################
 
 ##### Default initialization (with ssl verification)
