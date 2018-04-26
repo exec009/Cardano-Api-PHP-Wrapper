@@ -12,179 +12,160 @@ class Cardano
         $this->port = $port;
     }
 
-    // Test Functions Start //
-    public function testReset(): array
-    {
-        return self::json_decode($this->post('/api/test/reset'), true);
-    }
-    public function testState(): string
-    {
-        return $this->get('/api/test/state');
-    }
-    // Test Functions End //
-
-    // Wallet Functions Start //
+    //////////////////////////////
+    //  Wallet Functions Start  //
+    //////////////////////////////
+    
+    // Returns the Wallet identified by the given walletId.
     public function getWallet(string $walletId): array
     {
-        return self::jsonDecode($this->get('/api/wallets/'.$walletId), true);
+        return self::jsonDecode($this->get('/api/v1/wallets/'.$walletId), true);
     }
+
+    // Updates the password for the given Wallet.
     public function updateWallet(string $walletId, array $body):  array
     {
-        return self::jsonDecode($this->put('/api/wallets/'.$walletId, $body), true);
+        return self::jsonDecode($this->put('/api/v1/wallets/'.$walletId.'password?old='.$oldPassPhrase.'&new='.$newPassPhrase, $body), true);
     }
+
+    // Deletes the given Wallet and all its accounts.
     public function deleteWallet(string $walletId):  array
     {
-        return self::jsonDecode($this->delete('/api/wallets/'.$walletId), true);
+        return self::jsonDecode($this->delete('/api/v1/wallets/'.$walletId), true);
     }
+
+    // Returns a list of the available wallets.
     public function getWallets(): array
     {
-        return self::jsonDecode($this->get('/api/wallets'), true);
+        return self::jsonDecode($this->get('/api/v1/wallets'), true);
     }
+
+    // Creates a new or restores an existing Wallet.
     public function createWallet(array $body): array
     {
-        return self::jsonDecode($this->post('/api/wallets/new', $body), true);
+        return self::jsonDecode($this->post('/api/v1/wallets/', $body), true);
     }
-    public function importWalletKeys(string $passPhrase, string $key): array
-    {
-        return self::jsonDecode($this->post('/api/wallets/keys?passphrase='.$passPhrase, [$key]), true);
-    }
-    public function changeWalletPassPhrase(string $walletId, string $oldPassPhrase, string $newPassPhrase): array
-    {
-        return self::jsonDecode($this->post('/api/wallets/password'.$walletId.'?old='.$oldPassPhrase.'&new='.$newPassPhrase), true);
-    }
+
     // Wallet Functions End //
 
-    // Account Functions Start //
-    public function getAccount(string $accountId): array
+    //////////////////////////////
+    //  Account Functions Start //
+    //////////////////////////////
+
+    // Retrieves a specific Account.
+    public function getAccount(string $walletId, string $accountId): array
     {
-        return self::jsonDecode($this->get('/api/accounts/'.$accountId), true);
+        return self::jsonDecode($this->get('/api/v1/wallets/'.$walletId.'/accounts/'.$accountId), true);
     }
-    public function updateAccount(string $accountId, array $body):  array
+
+    // Update an Account for the given Wallet.
+    public function updateAccount(string $walletId, string $accountId, array $body):  array
     {
-        return self::jsonDecode($this->put('/api/accounts/'.$accountId, $body), true);
+        return self::jsonDecode($this->put('/api/v1/wallets/'.$walletId.'/accounts/'.$accountId, $body), true);
     }
-    public function deleteAccount(string $accountId):  array
+
+
+    public function deleteAccount(string $walletId, string $accountId):  array
     {
-        return self::jsonDecode($this->delete('/api/accounts/'.$accountId), true);
+        return self::jsonDecode($this->delete('/api/v1/wallets/'.$walletId.'/accounts/'.$accountId), true);
     }
-    public function getAccounts(): array
+
+    // Retrieves the full list of Accounts.
+    public function getAccounts(string $walletId): array
     {
-        return self::jsonDecode($this->get('/api/accounts'), true);
+        return self::jsonDecode($this->get('/api/v1/wallets/'.$walletId.'/accounts'), true);
     }
-    public function createAccount(array $body): array
+
+    // Creates a new Account for the given Wallet.
+    public function createAccount(string $walletId, array $body): array
     {
-        return self::jsonDecode($this->post('/api/accounts', $body), true);
+        return self::jsonDecode($this->post('/api/v1/wallets/'.$walletId.'/accounts', $body), true);
     }
     // Account Functions End //
     
-    // Address Functions Start //
-    public function createAddress(string $body): array
+
+    //////////////////////////////
+    // Address Functions Start  //
+    //////////////////////////////
+
+
+    // Returns a list of the addresses.
+    public function getAddresses(): array
     {
-        return self::jsonDecode($this->post('/api/addresses?passphrase='.$passPhrase, [$body]), true);
+
+        return self::jsonDecode($this->get('/api/v1/addresses'), true);
+
     }
-    public function addressIsValid(string $address): bool
+
+    // Creates a new Address.
+    public function createAddress(string $spendingPassword, string $accountIndex, string $walletId): array
     {
-        return $this->get('/api/addresses/'.$address) === 'true';
+        return self::jsonDecode($this->post('/api/v1/addresses?spendingPassword='.$spendingPassword.'?accountIndex='.$accountIndex.'?walletId='.$walletId), true);
+    }
+
+    // Returns interesting information about an address, if available and valid.
+    public function addressInfo(string $address): bool
+    {
+        return $this->get('/api/v1/addresses/'.$address) === 'true';
     }
     // Address Functions End //
 
-    // Profile Functions Start //
-    public function getProfile(): array
-    {
-        return self::jsonDecode($this->get('/api/profile'), true);
-    }
-    public function updateProfile(array $body): array
-    {
-        return self::jsonDecode($this->post('/api/profile', $body), true);
-    }
-    // Profile Functions End //
-
+    /////////////////////////////////
     // Transaction Functions Start //
-    public function createNewTransaction(string $fromAccount, string $toAddress, float $amount, string $body): array
+    /////////////////////////////////
+
+    // Generates a new transaction from the source to one or multiple target addresses.
+    public function createNewTransaction(array $source, array $destination, string $spendingPassword): array
     {
-        return self::jsonDecode($this->post('/api/txs/payments/'.$fromAccount.'/'.$toAddress.'/'.$amount, ['groupingPolicy' => $body]), true);
+        $groupPolicy = 'OptimizeForSecurity';
+        return self::jsonDecode($this->post('/api/v1/transactions?source='.$source.'?destination='.$destination.'?groupingPolicy='.$groupPolicy.'?spendingPassword='.$spendingPassword, true);
     }
-    public function estimateTransactionFee(string $from, string $to, float $amount, array $body): array
+    
+    // Estimate the fees which would originate from the payment.
+    public function estimateTransactionFee(array $source, array $destination, string $spendingPassword): array
     {
-        return self::jsonDecode($this->post('/api/txs/fee/'.$from.'/'.$to.'/'.$amount, $body), true);
+
+        return self::jsonDecode($this->post('/api/v1/transactions/fees?source='.$source.'?destination='.$destination.'?spendingPassword='.$spendingPassword), true);
     }
-    public function updateTransaction(string $address, string $transaction, array $body): array
-    {
-        return self::jsonDecode($this->post('/api/txs/payments/'.$address.'/'.$transaction, $body), true);
-    }
-    public function getTransactionHistory(string $walletId = null, string $accountId = null, string $address = null, int $skip = null, int $limit = null): array
+    
+    // Returns the transaction history, i.e the list of all the past transactions.
+    public function getTransactionHistory(string $walletId = null, string $accountIndex = null, string $address = null, int $page = null, int $per_page = null, string $id = null, string $created_at = null, string $sort_by = null): array
     {
         $params = [];
+        
         if($walletId !== null)
         $params['walletId'] = $walletId;
-        if($accountId !== null)
-        $params['accountId'] = $accountId;
+        
+        if($accountIndex !== null)
+        $params['accountIndex'] = $accountIndex;
+        
         if($address !== null)
         $params['address'] = $address;
-        if($skip !== null)
-        $params['skip'] = $skip;
-        if($limit !== null)
-        $params['limit'] = $limit;
-        return self::jsonDecode($this->get('/api/txs/histories?'.http_build_query($params)), true);
+        
+        if($page !== null)
+        $params['page'] = $page;
+
+        if($per_page !== null)
+        $params['per_page'] = $per_page;
+        
+        if($id !== null)
+        $params['id'] = $id;
+
+        if($created_at !== null)
+        $params['created_at'] = $created_at;
+
+        if($sort_by !== null)
+        $params['sort_by'] = $sort_by;
+        
+        return self::jsonDecode($this->get('/api/v1/transactions?'.http_build_query($params)), true);
     }
     // Transaction Functions End //
 
-    // Update Functions Start //
-    public function getUpdate(string $accountId): array
-    {
-        return self::jsonDecode($this->get('/api/update'), true);
-    }
-    public function postponeLastUpdate(): array
-    {
-        return self::jsonDecode($this->post('/api/update/postpone'), true);
-    }
-    public function applyLastUpdate(): array
-    {
-        return self::jsonDecode($this->post('/api/update/apply'), true);
-    }
-    // Update Functions End //
+   //////////////////////////////
+   //     Utility Functions    //
+   //////////////////////////////
 
-    // Redeem Functions Start //
-    public function redeemAda(string $passPhrase, array $body): array
-    {
-        return self::jsonDecode($this->post('/api/redemptions/ada?passphrase='.$passPharse, $body), true);
-    }
-    public function redeemAdaPaperVending(string $passPhrase, array $body): array
-    {
-        return self::jsonDecode($this->post('/api/papervend/redemptions/ada?passphrase='.$passPharse, $body), true);
-    }
-    // Redeem Functions End //
-
-    // Miscellaneous Functions Start //
-    public function initializedReport(): array
-    {
-        return self::jsonDecode($this->post('/api/reporting/initialized'), true);
-    }
-    public function getSlotsDuration(): int
-    {
-        return intval($this->get('/api/settings/slots/duration'));
-    }
-    public function getNodeVerison(): array
-    {
-        return self::jsonDecode($this->get('/api/settings/version'), true);
-    }
-    public function getSyncProgress(): array
-    {
-        return self::jsonDecode($this->get('/api/settings/sync/progress'), true);
-    }
-    public function importWallet(string $body): array
-    {
-        return self::jsonDecode($this->post('/api/backup/import', [$body]), true);
-    }
-    public function exportWallet(string $walletId, string $body): array
-    {
-        return self::jsonDecode($this->post('/api/backup/export/'.$walletId, [$body]), true);
-    }
-    public function getInfo(): array
-    {
-        return self::jsonDecode($this->get('/api/info'), true);
-    }
-    // Miscellaneous Functions End //
+    // JSON decode
     private static function jsonDecode(string $content): array
     {
         $data = json_decode($content, true);
@@ -193,6 +174,8 @@ class Cardano
         else
         return $data;
     }
+
+    // CURL Get
     private function get(string $endPoint): string
     {
         $ch = curl_init();
@@ -215,6 +198,8 @@ class Cardano
         curl_close($ch);
         return $data;
     }
+
+    // CURL Post
     private function post(string $endPoint, $postFields = []): string
     {
         $ch = curl_init();
@@ -250,6 +235,8 @@ class Cardano
         curl_close ($ch);
         return $data;
     }
+
+    // CURL Put
     private function put(string $endPoint, array $putFields = []): string
     {
         $ch = curl_init($endPoint);
@@ -270,6 +257,8 @@ class Cardano
         curl_close ($ch);
         return $data;
     }
+
+    // CURL Delete
     public function delete(string $endPoint, array $deleteFields): string
     {
         $ch = curl_init();
@@ -291,5 +280,7 @@ class Cardano
         curl_close($ch);
 		return $data;
     }
+    // End Utility Functions //
 }
+
 ?>
