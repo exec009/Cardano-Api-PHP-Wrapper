@@ -118,7 +118,7 @@ class Cardano
     public function createNewTransaction(array $source, array $destination, string $spendingPassword): array
     {
         $groupPolicy = 'OptimizeForSecurity';
-        return self::jsonDecode($this->post('/api/v1/transactions?source='.$source.'?destination='.$destination.'?groupingPolicy='.$groupPolicy.'?spendingPassword='.$spendingPassword, true);
+        return self::jsonDecode($this->post('/api/v1/transactions?source='.$source.'?destination='.$destination.'?groupingPolicy='.$groupPolicy.'?spendingPassword='.$spendingPassword, true));
     }
     
     // Estimate the fees which would originate from the payment.
