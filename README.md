@@ -26,15 +26,16 @@ https://daedaluswallet.io/
 ### **Example Usage**
 
 
-##### **Default initialization (with ssl verification)**
+##### **Initialization (w/ SSL verification)**
+
+The 'true' option enables SSL verification. It past versions you were allowed to use a self-signed certificate with the 'false' option or no option, that is no longer allowed, you must now use SSL.
+
+In order to use SSL you will need to edit the class and define the path to the wallet certificate, most likely located here: /path/to/state-wallet-mainnet/tls/client/client.pem 
+
 ```code
-$client = new Cardano('https://127.0.0.1', 8090); // (host, port)
+$client = new Cardano('https://127.0.0.1', 8090, true); // (host, port)
 ```
 
-##### **To disable ssl verification (for allowing self signed certificate)**
-```code
-$client = new Cardano('https://127.0.0.1', 8090, true);
-```
 ##### **Sample Call**
 ```code
 $client->getAccounts();

@@ -5,13 +5,27 @@ class Cardano
     private $url;
     private $disableSSLVerification;
     public $httpCode;
+    
+    // The option to not use an SSL certificate doesnt work anymore, so you need to tell curl where to find the certificate. 
+    const CERT_PATH = "<path>/<to>/state-wallet-mainnet/tls/client/client.pem";
+
     public function __construct(string $host, int $port, bool $disableSSLVerification = false)
     {
         $this->disableSSLVerification = $disableSSLVerification;
         $this->host = $host;
         $this->port = $port;
+      
     }
 
+    //////////////////////////////
+    //  Network Status          //
+    //////////////////////////////
+
+    public function getInfo() {
+        
+        return self::jsonDecode($this->get('/api/v1/node-info'), true);
+
+    }
     //////////////////////////////
     //  Wallet Functions Start  //
     //////////////////////////////
@@ -118,7 +132,7 @@ class Cardano
     public function createNewTransaction(array $source, array $destination, string $spendingPassword): array
     {
         $groupPolicy = 'OptimizeForSecurity';
-        return self::jsonDecode($this->post('/api/v1/transactions?source='.$source.'?destination='.$destination.'?groupingPolicy='.$groupPolicy.'?spendingPassword='.$spendingPassword, true);
+        return self::jsonDecode($this->post('/api/v1/transactions?source='.$source.'?destination='.$destination.'?groupingPolicy='.$groupPolicy.'?spendingPassword='.$spendingPassword), true);
     }
     
     // Estimate the fees which would originate from the payment.
@@ -184,6 +198,8 @@ class Cardano
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $this->host.':'.$this->port.$endPoint);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($ch, CURLOPT_SSLCERT, Cardano::CERT_PATH);
+        //curl_setopt($ch, CURLOPT_SSLVERSION, 2);
         if($this->disableSSLVerification)
         {
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -212,7 +228,9 @@ class Cardano
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postFields));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_SSLCERT, Cardano::CERT_PATH);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+
         $headers = [
             "Cache-Control: no-cache",
             "Content-Type: application/json;charset=utf-8",
@@ -242,6 +260,7 @@ class Cardano
         $ch = curl_init($endPoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_SSLCERT, Cardano::CERT_PATH);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($putFields));
         if($this->disableSSLVerification)
         {
@@ -266,6 +285,7 @@ class Cardano
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($putFields));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSLCERT, Cardano::CERT_PATH);
         if($this->disableSSLVerification)
         {
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
